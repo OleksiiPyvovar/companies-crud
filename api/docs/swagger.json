@@ -1,0 +1,279 @@
+{
+  "swagger": "2.0",
+  "paths": {
+    "/api/v1/companies/": {
+      "get": {
+        "description": "Returns list of Companies",
+        "operationId": "getCompanies",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "Limit",
+            "description": "The numbers of items to return",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "Name",
+            "description": "Filtring parameter",
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "Code",
+            "description": "Filtring parameter",
+            "name": "code",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "Country",
+            "description": "Filtring parameter",
+            "name": "country",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "Website",
+            "description": "Filtring parameter",
+            "name": "website",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "Phone",
+            "description": "Filtring parameter",
+            "name": "phone",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CompaniesListRespDef"
+          }
+        }
+      },
+      "put": {
+        "description": "Update company",
+        "operationId": "updateCompany",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CompanyResponse"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CompanyRespDef"
+          }
+        }
+      },
+      "post": {
+        "description": "Create a company",
+        "operationId": "createCompanies",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CompanyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CompanyRespDef"
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{id}": {
+      "get": {
+        "description": "Returns company by ID",
+        "operationId": "getCompany",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "Product ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CompanyRespDef"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete company by ID",
+        "operationId": "deleteCompany",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "ID",
+            "description": "Product ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CompanyDeleteResptDef"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CompaniesListResponse": {
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "description": "Company items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CompanyResponse"
+          },
+          "x-go-name": "Items"
+        }
+      },
+      "x-go-package": "github.com/OleksiiPyvovar/companies-crud/api/v1"
+    },
+    "CompanyRequest": {
+      "type": "object",
+      "required": [
+        "name",
+        "code",
+        "country"
+      ],
+      "properties": {
+        "code": {
+          "description": "Code",
+          "type": "string",
+          "x-go-name": "Code",
+          "example": "00101"
+        },
+        "country": {
+          "description": "Country",
+          "type": "string",
+          "x-go-name": "Country",
+          "example": "Ukraine"
+        },
+        "name": {
+          "description": "Name",
+          "type": "string",
+          "x-go-name": "Name",
+          "example": "EPAM"
+        },
+        "phone": {
+          "description": "Phone",
+          "type": "string",
+          "x-go-name": "Phone",
+          "example": "+38063334422"
+        },
+        "website": {
+          "description": "Website",
+          "type": "string",
+          "x-go-name": "Website",
+          "example": "https://www.epam.com/"
+        }
+      },
+      "x-go-package": "github.com/OleksiiPyvovar/companies-crud/api/v1"
+    },
+    "CompanyResponse": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "code",
+        "country"
+      ],
+      "properties": {
+        "code": {
+          "description": "Code",
+          "type": "string",
+          "x-go-name": "Code",
+          "example": "00101"
+        },
+        "country": {
+          "description": "Country",
+          "type": "string",
+          "x-go-name": "Country",
+          "example": "Ukraine"
+        },
+        "id": {
+          "description": "Company ID auto generated for each company",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID",
+          "example": 1
+        },
+        "name": {
+          "description": "Name",
+          "type": "string",
+          "x-go-name": "Name",
+          "example": "EPAM"
+        },
+        "phone": {
+          "description": "Phone",
+          "type": "string",
+          "x-go-name": "Phone",
+          "example": "+38063334422"
+        },
+        "website": {
+          "description": "Website",
+          "type": "string",
+          "x-go-name": "Website",
+          "example": "https://www.epam.com/"
+        }
+      },
+      "x-go-package": "github.com/OleksiiPyvovar/companies-crud/api/v1"
+    },
+    "DeleteCompayResponse": {
+      "type": "object",
+      "properties": {
+        "Success": {
+          "description": "Success",
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "x-go-package": "github.com/OleksiiPyvovar/companies-crud/api/v1"
+    }
+  },
+  "responses": {
+    "CompaniesListRespDef": {
+      "description": "JSON Response",
+      "schema": {
+        "$ref": "#/definitions/CompaniesListResponse"
+      }
+    },
+    "CompanyDeleteResptDef": {
+      "description": "JSON Response",
+      "schema": {
+        "$ref": "#/definitions/DeleteCompayResponse"
+      }
+    },
+    "CompanyRespDef": {
+      "description": "JSON Response",
+      "schema": {
+        "$ref": "#/definitions/CompanyResponse"
+      }
+    }
+  }
+}
