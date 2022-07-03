@@ -4,7 +4,7 @@ import (
 	apiv1 "github.com/OleksiiPyvovar/companies-crud/api/v1"
 )
 
-// swagger:route GET /api/v1/companies/ getCompanies
+// swagger:route GET /api/v1/companies getCompanies
 //
 // Returns list of Companies
 //

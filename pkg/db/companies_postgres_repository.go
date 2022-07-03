@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/OleksiiPyvovar/companies-crud/pkg/domain"
 
@@ -80,14 +81,11 @@ func (cpr *CompaniesPostgresRepository) GetByID(id int) (domain.Company, error) 
 }
 
 func (cpr *CompaniesPostgresRepository) List(options *domain.ListFilter) ([]domain.Company, error) {
-	query := "SELECT name, code, country, website, phone FROM companies LIMIT $1 "
+	query := "SELECT id, name, code, country, website, phone FROM companies %s"
 
-	filter, values := buildAttributeParams(options.Attributes)
-	if len(values) != 0 {
-		query += filter
-	}
+	filter, values := buildAttributeParams(options.Attributes, options.Limit)
+	query = fmt.Sprintf(query, filter)
 
-	values = append(values, options.Limit)
 	rows, err := cpr.conn.Query(context.Background(), query, values...)
 	if err != nil {
 		return nil, fmt.Errorf("query failed: %w", err)
@@ -107,37 +105,54 @@ func (cpr *CompaniesPostgresRepository) List(options *domain.ListFilter) ([]doma
 	return res, nil
 }
 
-func buildAttributeParams(options *domain.Company) (string, []interface{}) {
+func buildAttributeParams(options *domain.Company, limit int) (string, []interface{}) {
 	if options == nil {
 		return "", nil
 	}
 
-	var params []interface{}
-	counter := 1
-	q := "WHERE "
+	var (
+		values  []interface{}
+		params  []string
+		counter int
+		q       string
+	)
 
-	switch {
-	case options.Name != "":
+	if options.Name != "" {
 		counter += 1
-		q += fmt.Sprintf("name = $%d ", counter)
-		params = append(params, options.Name)
-	case options.Code != "":
-		counter += 1
-		q += fmt.Sprintf("code = $%d ", counter)
-		params = append(params, options.Code)
-	case options.Country != "":
-		counter += 1
-		q += fmt.Sprintf("country = $%d ", counter)
-		params = append(params, options.Country)
-	case options.Website != "":
-		counter += 1
-		q += fmt.Sprintf("website = $%d ", counter)
-		params = append(params, options.Website)
-	case options.Phone != "":
-		counter += 1
-		q += fmt.Sprintf("phone = $%d", counter)
-		params = append(params, options.Phone)
+		params = append(params, fmt.Sprintf("name = $%d ", counter))
+		values = append(values, options.Name)
 	}
 
-	return q, params
+	if options.Code != "" {
+		counter += 1
+		params = append(params, fmt.Sprintf("code = $%d", counter))
+		values = append(values, options.Code)
+	}
+
+	if options.Country != "" {
+		counter += 1
+		params = append(params, fmt.Sprintf("country = $%d", counter))
+		values = append(values, options.Country)
+	}
+
+	if options.Website != "" {
+		counter += 1
+		params = append(params, fmt.Sprintf("website = $%d", counter))
+		values = append(values, options.Website)
+	}
+
+	if options.Phone != "" {
+		counter += 1
+		params = append(params, fmt.Sprintf("phone = $%d", counter))
+		values = append(values, options.Phone)
+	}
+
+	if len(params) != 0 {
+		q = fmt.Sprintf("WHERE %s LIMIT $%d", strings.Join(params, ","), len(params)+1)
+	} else {
+		q = "LIMIT $1"
+	}
+	values = append(values, limit)
+
+	return q, values
 }

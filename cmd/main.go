@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/OleksiiPyvovar/companies-crud/api"
 	"github.com/OleksiiPyvovar/companies-crud/pkg/app"
@@ -21,12 +22,13 @@ func main() {
 		DBPort:    getOrDefault("DB_PORT", "5432"),
 		DBTCPHost: getOrDefault("DB_TCP_HOST", "35.238.184.102"),
 		DBName:    getOrDefault("DB_NAME", "companies"),
+
+		DefaultListLimit: getOrDefaultInt("DEFAULT_LIST_LIMIT", 100),
 	}
 
 	dbURI := fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s", conf.DBTCPHost, conf.DBUser, conf.DBPwd, conf.DBPort, conf.DBName)
 	conn, err := pgxpool.Connect(context.Background(), dbURI)
 	if err != nil {
-		fmt.Println("failed to connect db: ", err)
 		return
 	}
 
@@ -41,5 +43,19 @@ func getOrDefault(key, defval string) string {
 	if !exists {
 		return defval
 	}
+	return val
+}
+
+func getOrDefaultInt(key string, defval int) int {
+	v, exists := os.LookupEnv(key)
+	if !exists {
+		return defval
+	}
+
+	val, err := strconv.Atoi(v)
+	if err != nil {
+		return defval
+	}
+
 	return val
 }

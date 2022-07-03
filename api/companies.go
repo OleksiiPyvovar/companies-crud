@@ -52,6 +52,15 @@ func (a *API) CompanyUpdateHandler(w http.ResponseWriter, r *http.Request, _ htt
 		a.handleError(w, err, http.StatusInternalServerError)
 		return
 	}
+
+	_ = encodeResponse(w, apiv1.CompanyResponse{
+		ID:      company.ID,
+		Name:    company.Name,
+		Code:    company.Code,
+		Country: company.Country,
+		Website: company.Website,
+		Phone:   company.Phone,
+	})
 }
 
 func (a *API) CompanyDeleteByIDHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

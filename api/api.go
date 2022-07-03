@@ -19,8 +19,7 @@ type Config struct {
 	DBPort    string
 	DBName    string
 
-	DefaultListLimit     int
-	DefaultSortDirection string
+	DefaultListLimit int
 }
 
 type API struct {
@@ -35,13 +34,13 @@ type API struct {
 
 func (a *API) init() {
 
-	a.router.GET("/api/v1/companies/", a.CompanyListHandler)
+	a.router.GET("/api/v1/companies", a.CompanyListHandler)
 	a.router.GET("/api/v1/companies/:id", a.CompanyGetByIDHandler)
 	a.router.DELETE("/api/v1/companies/:id", a.CompanyDeleteByIDHandler)
 	a.router.POST("/api/v1/companies/", a.CompanyCreateHandler)
 	a.router.PUT("/api/v1/companies/", a.CompanyUpdateHandler)
 
-	a.router.ServeFiles("/api/docs/*filepath", http.Dir("swagger"))
+	a.router.ServeFiles("/docs/*filepath", http.Dir("static/swaggerui"))
 }
 
 func (a *API) Run() {
