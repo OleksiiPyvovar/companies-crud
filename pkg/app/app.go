@@ -4,6 +4,8 @@ import (
 	"github.com/OleksiiPyvovar/companies-crud/pkg/domain"
 )
 
+//go:generate mockgen -destination=./mocks/service.go -package=mocks . Service
+
 type Service interface {
 	Create(company *domain.Company) error
 	Update(company *domain.Company) error

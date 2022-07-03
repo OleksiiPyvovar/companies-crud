@@ -16,6 +16,7 @@ import (
 func main() {
 	conf := &api.Config{
 		ServerAddr: getOrDefault("SERVER_ADDR", ":8080"),
+		APISecret:  getOrDefault("API_SECRET", "tdeq43j"),
 
 		DBUser:    getOrDefault("DB_USER", "postgres"),
 		DBPwd:     getOrDefault("DB_PASSWORD", "*"),

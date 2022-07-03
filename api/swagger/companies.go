@@ -77,6 +77,8 @@ type CompanyRespDef struct {
 //
 // Responses:
 // 200: CompanyRespDef
+// Security:
+// - bearer: []
 
 // JSON parameters
 // swagger:parameters createCompanies
@@ -90,7 +92,9 @@ type CompanyCreateRequestDef struct {
 // Delete company by ID
 //
 // Responses:
-// 200: CompanyDeleteResptDef
+// 200: CompanyDeleteRespDef
+// Security:
+// - bearer: []
 
 // JSON parameters
 // swagger:parameters deleteCompany
@@ -104,7 +108,7 @@ type CompanyDeleteRequestDef struct {
 
 // JSON Response
 // swagger:response
-type CompanyDeleteResptDef struct {
+type CompanyDeleteRespDef struct {
 	// in: body
 	Body apiv1.DeleteCompayResponse
 }
@@ -115,6 +119,8 @@ type CompanyDeleteResptDef struct {
 //
 // Responses:
 // 200: CompanyRespDef
+// Security:
+// - bearer: []
 
 // JSON parameters
 // swagger:parameters updateCompany

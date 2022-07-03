@@ -3,6 +3,8 @@ module github.com/OleksiiPyvovar/companies-crud
 go 1.18
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/golang/mock v1.6.0
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/sirupsen/logrus v1.4.2

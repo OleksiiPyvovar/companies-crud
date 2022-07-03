@@ -1,5 +1,20 @@
 {
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
   "swagger": "2.0",
+  "info": {
+    "description": "Provides endpoints to view and manage Company entities.",
+    "title": "Companies crud API",
+    "version": "1.0.0"
+  },
   "paths": {
     "/api/v1/companies": {
       "get": {
@@ -59,6 +74,13 @@
     },
     "/api/v1/companies/": {
       "put": {
+        "security": [
+          {
+            "bearer": [
+              "[]"
+            ]
+          }
+        ],
         "description": "Update company",
         "operationId": "updateCompany",
         "parameters": [
@@ -77,6 +99,13 @@
         }
       },
       "post": {
+        "security": [
+          {
+            "bearer": [
+              "[]"
+            ]
+          }
+        ],
         "description": "Create a company",
         "operationId": "createCompanies",
         "parameters": [
@@ -117,6 +146,13 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "bearer": [
+              "[]"
+            ]
+          }
+        ],
         "description": "Delete company by ID",
         "operationId": "deleteCompany",
         "parameters": [
@@ -132,7 +168,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/CompanyDeleteResptDef"
+            "$ref": "#/responses/CompanyDeleteRespDef"
           }
         }
       }
@@ -265,7 +301,7 @@
         "$ref": "#/definitions/CompaniesListResponse"
       }
     },
-    "CompanyDeleteResptDef": {
+    "CompanyDeleteRespDef": {
       "description": "JSON Response",
       "schema": {
         "$ref": "#/definitions/DeleteCompayResponse"
@@ -276,6 +312,13 @@
       "schema": {
         "$ref": "#/definitions/CompanyResponse"
       }
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }
