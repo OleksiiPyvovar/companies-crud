@@ -38,6 +38,7 @@ RUN apk update \
 
 ENV APP_BIN=/usr/local/bin/companies-crud
 
+COPY static/ static/
 COPY --from=builder ${APP_BIN} ${APP_BIN}
 
 EXPOSE 8080 
