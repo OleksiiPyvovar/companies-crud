@@ -1,9 +1,10 @@
-package db
+package db_test
 
 import (
 	"context"
 	"testing"
 
+	"github.com/OleksiiPyvovar/companies-crud/pkg/db"
 	"github.com/OleksiiPyvovar/companies-crud/pkg/domain"
 
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -19,7 +20,7 @@ const (
 type CompaniesRepositoryTestSuite struct {
 	suite.Suite
 	pool *pgxpool.Pool
-	repo *CompaniesPostgresRepository
+	repo *db.CompaniesPostgresRepository
 }
 
 func TestCompaniesRepositoryTestSuite(t *testing.T) {
@@ -31,7 +32,7 @@ func (s *CompaniesRepositoryTestSuite) SetupSuite() {
 	require.NoError(s.T(), err)
 
 	s.pool = pool
-	s.repo = NewCompaniesPostgresRepository(s.pool)
+	s.repo = db.NewCompaniesPostgresRepository(s.pool)
 }
 
 func (s *CompaniesRepositoryTestSuite) SetupTest() {
@@ -80,7 +81,7 @@ func (s *CompaniesRepositoryTestSuite) TestCompanyGetByID() {
 
 func (s *CompaniesRepositoryTestSuite) TestCompanyUpdate() {
 	c := &domain.Company{
-		ID:      1,
+		ID:      2,
 		Name:    "Test-Co-1-updated",
 		Code:    "test-1-updated",
 		Country: "test-land-1-updated",
@@ -91,17 +92,17 @@ func (s *CompaniesRepositoryTestSuite) TestCompanyUpdate() {
 	err := s.repo.Update(c)
 	require.NoError(s.T(), err)
 
-	gotAfterUpdate, err := s.repo.GetByID(1)
+	gotAfterUpdate, err := s.repo.GetByID(2)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), gotAfterUpdate, *c)
 }
 
 func (s *CompaniesRepositoryTestSuite) TestCompanyCreate() {
 	c := &domain.Company{
-		Name:    "Test-Co-11-updated",
-		Code:    "test-11-updated",
-		Country: "test-land-11-updated",
-		Website: "www.test-1.updated.com",
+		Name:    "Test-Co-11-created",
+		Code:    "test-11-created",
+		Country: "test-land-11-created",
+		Website: "www.test-1.created.com",
 		Phone:   "1-1-1-1",
 	}
 

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -19,7 +20,7 @@ func main() {
 		APISecret:  getOrDefault("API_SECRET", "tdeq43j"),
 
 		DBUser:    getOrDefault("DB_USER", "postgres"),
-		DBPwd:     getOrDefault("DB_PASSWORD", "*!"),
+		DBPwd:     getOrDefault("DB_PASSWORD", "*"),
 		DBPort:    getOrDefault("DB_PORT", "5432"),
 		DBTCPHost: getOrDefault("DB_TCP_HOST", "35.238.184.102"),
 		DBName:    getOrDefault("DB_NAME", "companies"),
@@ -27,10 +28,12 @@ func main() {
 		DefaultListLimit: getOrDefaultInt("DEFAULT_LIST_LIMIT", 100),
 	}
 
-	dbURI := fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s", conf.DBTCPHost, conf.DBUser, conf.DBPwd, conf.DBPort, conf.DBName)
+	dbURI := fmt.Sprintf("host=%s user=%s password=%s port=%s database=%s",
+		conf.DBTCPHost, conf.DBUser, conf.DBPwd, conf.DBPort, conf.DBName)
+
 	conn, err := pgxpool.Connect(context.Background(), dbURI)
 	if err != nil {
-		fmt.Println("failed to set up database connection ", err)
+		log.Println("failed to set up database connection ", err)
 		return
 	}
 

@@ -7,7 +7,6 @@ import (
 	"github.com/OleksiiPyvovar/companies-crud/pkg/auth"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,7 +35,6 @@ type API struct {
 }
 
 func (a *API) init() {
-
 	a.router.GET("/api/v1/companies", a.CompanyListHandler)
 	a.router.GET("/api/v1/companies/:id", a.CompanyGetByIDHandler)
 	a.router.DELETE("/api/v1/companies/:id", a.MiddlewareAuthentication(a.CompanyDeleteByIDHandler))
@@ -59,7 +57,7 @@ func NewAPI(conf *Config, cs app.Service) *API {
 		router:     router,
 		server:     server,
 		Config:     conf,
-		Logger:     logrus.New(),
+		Logger:     log.New(),
 		Authorizer: auth.New(conf.APISecret),
 
 		CompaniesService: cs,

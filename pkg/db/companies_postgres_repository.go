@@ -55,11 +55,8 @@ func (cpr *CompaniesPostgresRepository) DeleteByID(id int) bool {
 	query := "DELETE FROM companies WHERE id=$1"
 
 	err := cpr.conn.QueryRow(context.Background(), query, id).Scan(&result)
-	if err.Error() != "no rows in result set" {
-		return false
-	}
 
-	return true
+	return err.Error() == "no rows in result set"
 }
 
 func (cpr *CompaniesPostgresRepository) GetByID(id int) (domain.Company, error) {
@@ -118,31 +115,31 @@ func buildAttributeParams(options *domain.Company, limit int) (string, []interfa
 	)
 
 	if options.Name != "" {
-		counter += 1
+		counter++
 		params = append(params, fmt.Sprintf("name = $%d ", counter))
 		values = append(values, options.Name)
 	}
 
 	if options.Code != "" {
-		counter += 1
+		counter++
 		params = append(params, fmt.Sprintf("code = $%d", counter))
 		values = append(values, options.Code)
 	}
 
 	if options.Country != "" {
-		counter += 1
+		counter++
 		params = append(params, fmt.Sprintf("country = $%d", counter))
 		values = append(values, options.Country)
 	}
 
 	if options.Website != "" {
-		counter += 1
+		counter++
 		params = append(params, fmt.Sprintf("website = $%d", counter))
 		values = append(values, options.Website)
 	}
 
 	if options.Phone != "" {
-		counter += 1
+		counter++
 		params = append(params, fmt.Sprintf("phone = $%d", counter))
 		values = append(values, options.Phone)
 	}

@@ -1,0 +1,32 @@
+run:
+  timeout: 5m
+linters:
+  disable-all: false
+  disable:
+    - wsl
+    - gci
+    - noctx
+    - gomnd
+    - godot
+    - ifshort
+    - goerr113
+    - nlreturn
+    - wrapcheck
+    - paralleltest
+    - exhaustivestruct
+  presets:
+    - bugs
+    - complexity
+    - format
+    - performance
+    - style
+    - unused
+  fast: false
+linters-settings:
+  lll:
+    line-length: 120
+  cyclop:
+    max-complexity: 18
+    skip-tests: true
+  exhaustive:
+    default-signifies-exhaustive: true

@@ -65,7 +65,7 @@ func (a *API) CompanyUpdateHandler(w http.ResponseWriter, r *http.Request, _ htt
 func (a *API) CompanyDeleteByIDHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil {
-		a.handleError(w, fmt.Errorf("bad id format '%s': %v", params.ByName("id"), err), http.StatusBadRequest)
+		a.handleError(w, fmt.Errorf("bad id format '%s': %w", params.ByName("id"), err), http.StatusBadRequest)
 		return
 	}
 
@@ -76,7 +76,7 @@ func (a *API) CompanyDeleteByIDHandler(w http.ResponseWriter, r *http.Request, p
 func (a *API) CompanyGetByIDHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil {
-		a.handleError(w, fmt.Errorf("bad id format '%s': %v", params.ByName("id"), err), http.StatusBadRequest)
+		a.handleError(w, fmt.Errorf("bad id format '%s': %w", params.ByName("id"), err), http.StatusBadRequest)
 		return
 	}
 
