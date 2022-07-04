@@ -40,4 +40,6 @@ ENV APP_BIN=/usr/local/bin/companies-crud
 
 COPY --from=builder ${APP_BIN} ${APP_BIN}
 
+EXPOSE 8080 
+
 CMD ${APP_BIN}

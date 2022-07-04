@@ -1,0 +1,225 @@
+consumes:
+- application/json
+definitions:
+  CompaniesListResponse:
+    properties:
+      items:
+        description: Company items
+        items:
+          $ref: '#/definitions/CompanyResponse'
+        type: array
+        x-go-name: Items
+    required:
+    - items
+    type: object
+    x-go-package: github.com/OleksiiPyvovar/companies-crud/api/v1
+  CompanyRequest:
+    properties:
+      code:
+        description: Code
+        example: "00101"
+        type: string
+        x-go-name: Code
+      country:
+        description: Country
+        example: Ukraine
+        type: string
+        x-go-name: Country
+      name:
+        description: Name
+        example: EPAM
+        type: string
+        x-go-name: Name
+      phone:
+        description: Phone
+        example: "+38063334422"
+        type: string
+        x-go-name: Phone
+      website:
+        description: Website
+        example: https://www.epam.com/
+        type: string
+        x-go-name: Website
+    required:
+    - name
+    - code
+    - country
+    type: object
+    x-go-package: github.com/OleksiiPyvovar/companies-crud/api/v1
+  CompanyResponse:
+    properties:
+      code:
+        description: Code
+        example: "00101"
+        type: string
+        x-go-name: Code
+      country:
+        description: Country
+        example: Ukraine
+        type: string
+        x-go-name: Country
+      id:
+        description: Company ID auto generated for each company
+        example: 1
+        format: int64
+        type: integer
+        x-go-name: ID
+      name:
+        description: Name
+        example: EPAM
+        type: string
+        x-go-name: Name
+      phone:
+        description: Phone
+        example: "+38063334422"
+        type: string
+        x-go-name: Phone
+      website:
+        description: Website
+        example: https://www.epam.com/
+        type: string
+        x-go-name: Website
+    required:
+    - id
+    - name
+    - code
+    - country
+    type: object
+    x-go-package: github.com/OleksiiPyvovar/companies-crud/api/v1
+  DeleteCompayResponse:
+    properties:
+      Success:
+        description: Success
+        example: true
+        type: boolean
+    type: object
+    x-go-package: github.com/OleksiiPyvovar/companies-crud/api/v1
+info:
+  description: Provides endpoints to view and manage Company entities.
+  title: Companies crud API
+  version: 1.0.0
+paths:
+  /api/v1/companies:
+    get:
+      description: Returns list of Companies
+      operationId: getCompanies
+      parameters:
+      - description: The numbers of items to return
+        format: int64
+        in: query
+        name: limit
+        type: integer
+        x-go-name: Limit
+      - description: Filtring parameter
+        in: query
+        name: name
+        type: string
+        x-go-name: Name
+      - description: Filtring parameter
+        in: query
+        name: code
+        type: string
+        x-go-name: Code
+      - description: Filtring parameter
+        in: query
+        name: country
+        type: string
+        x-go-name: Country
+      - description: Filtring parameter
+        in: query
+        name: website
+        type: string
+        x-go-name: Website
+      - description: Filtring parameter
+        in: query
+        name: phone
+        type: string
+        x-go-name: Phone
+      responses:
+        "200":
+          $ref: '#/responses/CompaniesListRespDef'
+  /api/v1/companies/:
+    post:
+      description: Create a company
+      operationId: createCompanies
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/CompanyRequest'
+      responses:
+        "200":
+          $ref: '#/responses/CompanyRespDef'
+      security:
+      - bearer:
+        - '[]'
+    put:
+      description: Update company
+      operationId: updateCompany
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/CompanyResponse'
+      responses:
+        "200":
+          $ref: '#/responses/CompanyRespDef'
+      security:
+      - bearer:
+        - '[]'
+  /api/v1/companies/{id}:
+    delete:
+      description: Delete company by ID
+      operationId: deleteCompany
+      parameters:
+      - description: Product ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/CompanyDeleteRespDef'
+      security:
+      - bearer:
+        - '[]'
+    get:
+      description: Returns company by ID
+      operationId: getCompany
+      parameters:
+      - description: Product ID
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "200":
+          $ref: '#/responses/CompanyRespDef'
+produces:
+- application/json
+responses:
+  CompaniesListRespDef:
+    description: JSON Response
+    schema:
+      $ref: '#/definitions/CompaniesListResponse'
+  CompanyDeleteRespDef:
+    description: JSON Response
+    schema:
+      $ref: '#/definitions/DeleteCompayResponse'
+  CompanyRespDef:
+    description: JSON Response
+    schema:
+      $ref: '#/definitions/CompanyResponse'
+schemes:
+- https
+- http
+securityDefinitions:
+  bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

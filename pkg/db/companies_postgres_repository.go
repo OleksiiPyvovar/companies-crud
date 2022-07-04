@@ -52,7 +52,7 @@ func (cpr *CompaniesPostgresRepository) Update(company *domain.Company) error {
 
 func (cpr *CompaniesPostgresRepository) DeleteByID(id int) bool {
 	var result string
-	query := "DELETE FROM companies WHERE id=$1;"
+	query := "DELETE FROM companies WHERE id=$1"
 
 	err := cpr.conn.QueryRow(context.Background(), query, id).Scan(&result)
 	if err.Error() != "no rows in result set" {
@@ -107,7 +107,7 @@ func (cpr *CompaniesPostgresRepository) List(options *domain.ListFilter) ([]doma
 
 func buildAttributeParams(options *domain.Company, limit int) (string, []interface{}) {
 	if options == nil {
-		return "", nil
+		return "ORDER BY id ASC LIMIT $1", []interface{}{limit}
 	}
 
 	var (
@@ -148,9 +148,9 @@ func buildAttributeParams(options *domain.Company, limit int) (string, []interfa
 	}
 
 	if len(params) != 0 {
-		q = fmt.Sprintf("WHERE %s LIMIT $%d", strings.Join(params, ","), len(params)+1)
+		q = fmt.Sprintf("WHERE %s ORDER BY id ASC LIMIT $%d", strings.Join(params, " AND "), len(params)+1)
 	} else {
-		q = "LIMIT $1"
+		q = "ORDER BY id ASC LIMIT $1"
 	}
 	values = append(values, limit)
 

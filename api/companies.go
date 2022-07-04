@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 
 	apiv1 "github.com/OleksiiPyvovar/companies-crud/api/v1"
@@ -98,9 +97,20 @@ func (a *API) CompanyGetByIDHandler(w http.ResponseWriter, r *http.Request, para
 }
 
 func (a *API) CompanyListHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = a.Config.DefaultListLimit
+	}
+
 	filter := &domain.ListFilter{
-		Limit:      a.getListLimitFromValuesOrDefaults(r.URL.Query()),
-		Attributes: getAttrFilterFromValues(r.URL.Query()),
+		Limit: limit,
+		Attributes: &domain.Company{
+			Name:    r.URL.Query().Get("name"),
+			Code:    r.URL.Query().Get("code"),
+			Country: r.URL.Query().Get("country"),
+			Website: r.URL.Query().Get("website"),
+			Phone:   r.URL.Query().Get("phone"),
+		},
 	}
 
 	companies, err := a.CompaniesService.List(filter)
@@ -125,30 +135,6 @@ func (a *API) CompanyListHandler(w http.ResponseWriter, r *http.Request, _ httpr
 	}
 
 	_ = encodeResponse(w, resp)
-}
-
-func (a *API) getListLimitFromValuesOrDefaults(values url.Values) int {
-	var (
-		limit int
-		err   error
-	)
-
-	limit, err = strconv.Atoi(values.Get("limit"))
-	if err != nil {
-		limit = a.Config.DefaultListLimit
-	}
-
-	return limit
-}
-
-func getAttrFilterFromValues(values url.Values) *domain.Company {
-	return &domain.Company{
-		Name:    values.Get("name"),
-		Code:    values.Get("code"),
-		Country: values.Get("country"),
-		Website: values.Get("website"),
-		Phone:   values.Get("phone"),
-	}
 }
 
 func encodeResponse(w http.ResponseWriter, resp interface{}) error {
