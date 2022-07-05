@@ -9,9 +9,15 @@ type Company struct {
 	Phone   string `json:"phone"`
 }
 
+type Filter struct {
+	Value    string
+	Attr     string
+	Operator string
+}
+
 type ListFilter struct {
-	Limit      int
-	Attributes *Company
+	Limit   int
+	Filters []Filter
 }
 
 type Repository interface {
@@ -19,5 +25,5 @@ type Repository interface {
 	Update(company *Company) error
 	DeleteByID(id int) bool
 	GetByID(id int) (Company, error)
-	List(options *ListFilter) ([]Company, error)
+	List(options ListFilter) ([]Company, error)
 }

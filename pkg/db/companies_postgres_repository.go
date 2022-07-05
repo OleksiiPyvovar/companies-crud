@@ -12,6 +12,11 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
+const (
+	OperatorEqual    = "="
+	OperatorNotEqual = "!="
+)
+
 type CompaniesPostgresRepository struct {
 	conn *pgxpool.Pool
 }
@@ -77,10 +82,10 @@ func (cpr *CompaniesPostgresRepository) GetByID(id int) (domain.Company, error) 
 	return row, nil
 }
 
-func (cpr *CompaniesPostgresRepository) List(options *domain.ListFilter) ([]domain.Company, error) {
+func (cpr *CompaniesPostgresRepository) List(options domain.ListFilter) ([]domain.Company, error) {
 	query := "SELECT id, name, code, country, website, phone FROM companies %s"
 
-	filter, values := buildAttributeParams(options.Attributes, options.Limit)
+	filter, values := buildAttributeParams(options)
 	query = fmt.Sprintf(query, filter)
 
 	rows, err := cpr.conn.Query(context.Background(), query, values...)
@@ -102,46 +107,19 @@ func (cpr *CompaniesPostgresRepository) List(options *domain.ListFilter) ([]doma
 	return res, nil
 }
 
-func buildAttributeParams(options *domain.Company, limit int) (string, []interface{}) {
-	if options == nil {
-		return "ORDER BY id ASC LIMIT $1", []interface{}{limit}
-	}
-
+func buildAttributeParams(options domain.ListFilter) (string, []interface{}) {
 	var (
-		values  []interface{}
-		params  []string
-		counter int
-		q       string
+		values     []interface{}
+		params     []string
+		q          string
+		filterTmpl = "%s %s $%d"
 	)
 
-	if options.Name != "" {
-		counter++
-		params = append(params, fmt.Sprintf("name = $%d ", counter))
-		values = append(values, options.Name)
-	}
-
-	if options.Code != "" {
-		counter++
-		params = append(params, fmt.Sprintf("code = $%d", counter))
-		values = append(values, options.Code)
-	}
-
-	if options.Country != "" {
-		counter++
-		params = append(params, fmt.Sprintf("country = $%d", counter))
-		values = append(values, options.Country)
-	}
-
-	if options.Website != "" {
-		counter++
-		params = append(params, fmt.Sprintf("website = $%d", counter))
-		values = append(values, options.Website)
-	}
-
-	if options.Phone != "" {
-		counter++
-		params = append(params, fmt.Sprintf("phone = $%d", counter))
-		values = append(values, options.Phone)
+	for i, filter := range options.Filters {
+		params = append(params,
+			fmt.Sprintf(filterTmpl, filter.Attr, convertOperator(filter.Operator), i+1),
+		)
+		values = append(values, filter.Value)
 	}
 
 	if len(params) != 0 {
@@ -149,7 +127,18 @@ func buildAttributeParams(options *domain.Company, limit int) (string, []interfa
 	} else {
 		q = "ORDER BY id ASC LIMIT $1"
 	}
-	values = append(values, limit)
+	values = append(values, options.Limit)
 
 	return q, values
+}
+
+func convertOperator(operator string) string {
+	switch operator {
+	case "eq":
+		return OperatorEqual
+	case "ne":
+		return OperatorNotEqual
+	}
+
+	return OperatorEqual
 }

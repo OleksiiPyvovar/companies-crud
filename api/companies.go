@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	apiv1 "github.com/OleksiiPyvovar/companies-crud/api/v1"
 	"github.com/OleksiiPyvovar/companies-crud/pkg/domain"
@@ -97,23 +98,29 @@ func (a *API) CompanyGetByIDHandler(w http.ResponseWriter, r *http.Request, para
 }
 
 func (a *API) CompanyListHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	companyQueryAttr := []string{"name", "code", "country", "website", "phone"}
+
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
 		limit = a.Config.DefaultListLimit
 	}
 
-	filter := &domain.ListFilter{
-		Limit: limit,
-		Attributes: &domain.Company{
-			Name:    r.URL.Query().Get("name"),
-			Code:    r.URL.Query().Get("code"),
-			Country: r.URL.Query().Get("country"),
-			Website: r.URL.Query().Get("website"),
-			Phone:   r.URL.Query().Get("phone"),
-		},
+	var filters []domain.Filter
+	for _, attr := range companyQueryAttr {
+		if value := r.URL.Query().Get(attr); value != "" {
+			val, operator := splitValueAndOperator(value)
+			filters = append(filters, domain.Filter{
+				Attr:     attr,
+				Value:    val,
+				Operator: operator,
+			})
+		}
 	}
 
-	companies, err := a.CompaniesService.List(filter)
+	companies, err := a.CompaniesService.List(domain.ListFilter{
+		Limit:   limit,
+		Filters: filters,
+	})
 	if err != nil {
 		a.handleError(w, err, http.StatusInternalServerError)
 		return
@@ -141,4 +148,13 @@ func encodeResponse(w http.ResponseWriter, resp interface{}) error {
 	w.Header().Add("Content-Type", "application/json")
 
 	return json.NewEncoder(w).Encode(resp)
+}
+
+func splitValueAndOperator(v string) (string, string) {
+	parts := strings.Split(v, "|")
+	if len(parts) == 2 {
+		return parts[0], parts[1]
+	}
+
+	return v, ""
 }

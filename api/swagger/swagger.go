@@ -2,7 +2,7 @@
 //
 // Provides endpoints to view and manage Company entities.
 //
-// Schemes: https, http
+// Schemes: http
 // BasePath: ~
 // Version: 1.0.0
 // Licence: Proprietary

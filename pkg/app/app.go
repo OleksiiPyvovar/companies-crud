@@ -11,7 +11,7 @@ type Service interface {
 	Update(company *domain.Company) error
 	DeleteByID(id int) bool
 	GetByID(id int) (domain.Company, error)
-	List(options *domain.ListFilter) ([]domain.Company, error)
+	List(options domain.ListFilter) ([]domain.Company, error)
 }
 
 type service struct {
@@ -40,6 +40,6 @@ func (svc *service) GetByID(id int) (domain.Company, error) {
 	return svc.repository.GetByID(id)
 }
 
-func (svc *service) List(options *domain.ListFilter) ([]domain.Company, error) {
+func (svc *service) List(options domain.ListFilter) ([]domain.Company, error) {
 	return svc.repository.List(options)
 }

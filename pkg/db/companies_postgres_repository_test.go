@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	connURL = "user=postgres password=postgres host=localhost port=5432 dbname=companies"
+	connURL = "user=postgres password=postgres host=35.238.184.102 port=5432 dbname=companies"
 )
 
 type CompaniesRepositoryTestSuite struct {
@@ -50,21 +50,83 @@ func (s *CompaniesRepositoryTestSuite) SetupTest() {
 
 func (s *CompaniesRepositoryTestSuite) TestCompaniesList() {
 	expected := getTestCompanies()
-	got, err := s.repo.List(&domain.ListFilter{Limit: 10})
+	got, err := s.repo.List(domain.ListFilter{Limit: 10})
 	require.NoError(s.T(), err)
 	assert.ElementsMatch(s.T(), got, expected)
 
-	got, err = s.repo.List(&domain.ListFilter{Limit: 5})
+	got, err = s.repo.List(domain.ListFilter{Limit: 5})
 	require.NoError(s.T(), err)
 	assert.ElementsMatch(s.T(), got, expected[:5])
 
-	got, err = s.repo.List(&domain.ListFilter{Attributes: &domain.Company{Name: "Test-Co-1"}, Limit: 5})
+	filter := []domain.Filter{
+		{
+			Attr:     "name",
+			Value:    "Test-Co-1",
+			Operator: "eq",
+		},
+	}
+	got, err = s.repo.List(domain.ListFilter{Filters: filter, Limit: 5})
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), got[0], expected[0])
 
-	got, err = s.repo.List(&domain.ListFilter{Attributes: &domain.Company{Country: "test-land-2", Code: "test-2"}, Limit: 5})
+	filter = []domain.Filter{
+		{
+			Attr:     "country",
+			Value:    "test-land-2",
+			Operator: "eq",
+		},
+		{
+			Attr:     "code",
+			Value:    "test-2",
+			Operator: "eq",
+		},
+	}
+	got, err = s.repo.List(domain.ListFilter{Filters: filter, Limit: 5})
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), got[0], expected[1])
+
+	filter = []domain.Filter{
+		{
+			Attr:     "name",
+			Value:    "Test-Co-1",
+			Operator: "ne",
+		},
+	}
+	got, err = s.repo.List(domain.ListFilter{Filters: filter, Limit: 10})
+	require.NoError(s.T(), err)
+	assert.ElementsMatch(s.T(), got, expected[1:])
+
+	filter = []domain.Filter{
+		{
+			Attr:     "name",
+			Value:    "Test-Co-1",
+			Operator: "ne",
+		},
+		{
+			Attr:     "phone",
+			Value:    "1-1-1-1",
+			Operator: "eq",
+		},
+	}
+	got, err = s.repo.List(domain.ListFilter{Filters: filter, Limit: 10})
+	require.NoError(s.T(), err)
+	assert.ElementsMatch(s.T(), got, expected[1:])
+
+	filter = []domain.Filter{
+		{
+			Attr:     "name",
+			Value:    "Test-Co-1",
+			Operator: "ne",
+		},
+		{
+			Attr:     "website",
+			Value:    "www.test-10.com",
+			Operator: "ne",
+		},
+	}
+	got, err = s.repo.List(domain.ListFilter{Filters: filter, Limit: 10})
+	require.NoError(s.T(), err)
+	assert.ElementsMatch(s.T(), got, expected[1:9])
 }
 
 func (s *CompaniesRepositoryTestSuite) TestCompanyGetByID() {
